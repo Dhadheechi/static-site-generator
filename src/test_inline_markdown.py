@@ -50,10 +50,11 @@ class TestSplitNode(unittest.TestCase):
     def test_bold_at_end(self):
         node = TextNode("This is text with a **bold block**", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD) 
+        # print("New nodes: ", new_nodes)
         expected_output = [
             TextNode("This is text with a ", TextType.TEXT),
             TextNode("bold block", TextType.BOLD),
-            # TextNode("", TextType.TEXT),
+            TextNode("", TextType.TEXT),
         ]
         self.assertEqual(new_nodes, expected_output)
 
@@ -134,11 +135,18 @@ class TestSplitNode(unittest.TestCase):
             TextNode("link", TextType.LINK, "https://boot.dev"),
         ]
         new_nodes = text_to_textnodes(text)
-        print(len(new_nodes) == len(expected_output))
+        # print(len(new_nodes) == len(expected_output))
         self.assertListEqual(
             expected_output, new_nodes
         )
+    def test_text_to_textnodes_with_newlines(self):
+        text = """
+This is **bolded** paragraph
+text in a p
+tag here
 
+This is another paragraph with _italic_ text and `code` here
+"""
 
 class TestExtractMarkdown(unittest.TestCase):
     def test_extract_markdown_images(self):

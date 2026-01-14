@@ -14,11 +14,13 @@ class HTMLNode:
         if self.props is None or len(self.props.keys()) == 0:
             return ""
         
-        string_list = list(map(lambda x: f'{x[0]}="{x[1]}"', self.props.items()))
-        return " ".join(string_list)
+        props_html = ""
+        for prop in self.props:
+            props_html += f' {prop}="{self.props[prop]}"'
+        return props_html
 
     def __repr__(self): # this method should return a string object
-        return f"HTMLNode(tag= {self.tag}, value= {self.value}, children= {self.children}, props= {self.props})"
+        return f"HTMLNode(tag = {self.tag}, value = {self.value}, children = {self.children}, props = {self.props})"
     
 
 
@@ -32,30 +34,12 @@ class LeafNode(HTMLNode):
     def to_html(self): # renders a leaf node as a html string
         if self.value is None:
             raise ValueError("No value assigned to the leaf node") # all leaf nodes must have a value
-        elif self.tag is None:
-            return self.value
-        
-        match self.tag:
-            case "p":
-                return f'<p>{self.value}</p>'
-            case "b":
-                return f'<b>{self.value}</b>'
-            case "i":
-                return f'<i>{self.value}</i>'
-            case "a":
-                return f'<a {self.props_to_html()}>{self.value}</a>' # converts the attribute of the anchor tag to a string
-            case "li":
-                return f'<li>{self.value}</li>'
-            case "code":
-                return f'<code>{self.value}</code>'
-            case "blockquote":
-                return f'<blockquote>{self.value}</blockquote>'
-            case "img": # yet to test properly -- I don't know how exactly it's supposed to render
-                return f'<img {self.props_to_html()} />'
-            case "span":
-                return f'<span>{self.value}</span>'
-            
-        
+        if self.tag is None:
+            return self.value # will be rendered as raw text
+    
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>" 
+    def __repr__(self): # this method should return a string object
+        return f"LeafNode(tag = {self.tag}, value = {self.value}, props = {self.props})"
 
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None): 
@@ -77,11 +61,6 @@ class ParentNode(HTMLNode):
         
         output_string = f'<{self.tag}>{output_string}</{self.tag}>' # we concatenate the outputs of all the child nodes
         return output_string
-    
-    
-
-
-
 
 def text_node_to_html_node(text_node): # converts a text node to a leaf node
 
@@ -95,7 +74,7 @@ def text_node_to_html_node(text_node): # converts a text node to a leaf node
         case TextType.CODE:
             return LeafNode("code", text_node.text)
         case TextType.LINK:
-            return LeafNode("link", text_node.text, props={"href": text_node.url})
+            return LeafNode("a", text_node.text, props={"href": text_node.url})
         case TextType.IMAGE:
             return LeafNode("img", value="", props={"src": text_node.url, "alt": text_node.text}) 
 

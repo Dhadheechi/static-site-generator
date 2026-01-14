@@ -6,7 +6,7 @@ from textnode import TextNode, TextType
 class TestHTMLNode(unittest.TestCase):
     def test_props(self):
         node = HTMLNode("p", "some text", props={"href": "https://www.google.com", "target": "_blank"})
-        output = 'href="https://www.google.com" target="_blank"'
+        output = ' href="https://www.google.com" target="_blank"'
         
         self.assertEqual(node.props_to_html(), output)
 
@@ -17,7 +17,7 @@ class TestHTMLNode(unittest.TestCase):
     
     def test_repr(self):
         node = HTMLNode("p", "some text",  props={"href": "https://www.google.com", "target": "_blank"})
-        expected_output = "HTMLNode(tag= p, value= some text, children= None, props= {'href': 'https://www.google.com', 'target': '_blank'})"
+        expected_output = "HTMLNode(tag = p, value = some text, children = None, props = {'href': 'https://www.google.com', 'target': '_blank'})"
         
         actual_output = node.__repr__()
         # print(output)
